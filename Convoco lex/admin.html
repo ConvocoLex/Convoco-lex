@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel | Convoco Lex</title>
+    <style>
+        body {
+            font-family: "Times New Roman", Times, serif;
+            margin: 0;
+            background-color: #f4f6f8;
+        }
+
+        nav, .dashboard, footer, .section {
+            display: none; /* hidden until login */
+        }
+
+        /* Login overlay */
+        #loginOverlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(11,29,58,0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        #loginBox {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            width: 300px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        #loginBox input, #loginBox button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            font-family: inherit;
+            font-size: 15px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        #loginBox button {
+            background-color: #0b1d3a;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #loginBox button:hover {
+            opacity: 0.9;
+        }
+
+        nav {
+            background-color: #0b1d3a;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav h1 { color: white; margin: 0; font-size: 24px; }
+        nav a { color: white; text-decoration: none; margin-left: 20px; font-size: 16px; }
+
+        header { text-align: center; padding: 40px; background-color: #e3e6ea; }
+        header h1 { color: #0b1d3a; }
+
+        .dashboard { max-width: 1000px; margin: 40px auto; }
+
+        .section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: block;
+        }
+
+        .section h2 { margin-top: 0; color: #0b1d3a; }
+
+        input, select, textarea, button {
+            width: 100%;
+            margin-top: 10px;
+            padding: 10px;
+            font-family: inherit;
+            font-size: 15px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        textarea { resize: vertical; min-height: 80px; }
+
+        button { background-color: #0b1d3a; color: white; border: none; cursor: pointer; margin-top: 10px; }
+        .delete-btn { background-color: #c0392b; margin-top: 5px; }
+
+        .card { border: 1px solid #ccc; border-radius: 6px; padding: 10px; margin-bottom: 10px; }
+        .card p { margin: 5px 0; }
+
+        footer { background-color: #0b1d3a; color: white; text-align: center; padding: 15px; margin-top: 60px; }
+    </style>
+</head>
+<body>
+
+<!-- Login Overlay -->
+<div id="loginOverlay">
+    <div id="loginBox">
+        <h2>Admin Login</h2>
+        <input type="password" id="adminPassword" placeholder="Enter Password">
+        <button onclick="checkPassword()">Login</button>
+    </div>
+</div>
+
+<nav>
+    <h1>Convoco Lex Admin</h1>
+    <div>
+        <a href="index.html">Home</a>
+        <a href="archives.html">Archives</a>
+        <a href="events.html">Events</a>
+        <a href="team.html">Team</a>
+        <a href="about.html">About Us</a>
+        <a href="contact.html">Contact Us</a>
+    </div>
+</nav>
+
+<header>
+    <h1>Admin Dashboard</h1>
+</header>
+
+<div class="dashboard">
+
+    <!-- Issues Section -->
+    <div class="section" id="issuesSection">
+        <h2>Manage Issues</h2>
+        <form id="issueForm">
+            <input type="text" id="issueTitle" placeholder="Issue Title" required>
+            <select id="issueType" required>
+                <option value="">Select Type</option>
+                <option value="Article">Article</option>
+                <option value="Video">Video</option>
+                <option value="Vlog">Vlog</option>
+            </select>
+            <textarea id="issueDescription" placeholder="Description" required></textarea>
+            <button type="submit">Add Issue</button>
+        </form>
+        <div id="issuesContainer"><p>Loading issues...</p></div>
+    </div>
+
+    <!-- Events Section -->
+    <div class="section" id="eventsSection">
+        <h2>Manage Events</h2>
+        <form id="eventForm">
+            <input type="text" id="eventTitle" placeholder="Event Title" required>
+            <textarea id="eventDescription" placeholder="Description" required></textarea>
+            <select id="eventType" required>
+                <option value="">Select Type</option>
+                <option value="Event">Event</option>
+                <option value="Quiz">Quiz</option>
+                <option value="Debate">Debate</option>
+                <option value="Workshop">Workshop</option>
+            </select>
+            <input type="date" id="eventDate" required>
+            <button type="submit">Add Event</button>
+        </form>
+        <div id="eventsContainer"><p>Loading events...</p></div>
+    </div>
+
+    <!-- Team Section -->
+    <div class="section" id="teamSectionAdmin">
+        <h2>Manage Team Members</h2>
+        <form id="teamForm">
+            <input type="text" id="teamName" placeholder="Name" required>
+            <input type="text" id="teamPosition" placeholder="Position" required>
+            <input type="email" id="teamEmail" placeholder="Email" required>
+            <input type="text" id="teamLinkedIn" placeholder="LinkedIn URL" required>
+            <input type="text" id="teamPhoto" placeholder="Photo URL" required>
+            <button type="submit">Add Member</button>
+        </form>
+        <div id="teamContainer"><p>Loading team members...</p></div>
+    </div>
+
+    <!-- Contact Messages Section -->
+    <div class="section" id="contactMessagesSection">
+        <h2>Contact Messages</h2>
+        <div id="messagesContainer"><p>Loading messages...</p></div>
+    </div>
+
+</div>
+
+<footer>
+    © 2025 Convoco Lex. All rights reserved.
+</footer>
+
+<script>
+    // =================== PASSWORD SYSTEM ===================
+    const ADMIN_PASSWORD = "convoco123"; // set your password here
+
+    function checkPassword() {
+        const input = document.getElementById("adminPassword").value;
+        if(input === ADMIN_PASSWORD){
+            document.getElementById("loginOverlay").style.display = "none";
+            document.querySelectorAll("nav, .dashboard, footer").forEach(el => el.style.display = "block");
+        } else {
+            alert("Incorrect password. Try again.");
+        }
+    }
+
+    // ================== ISSUES ==================
+    const issueForm = document.getElementById("issueForm");
+    const issuesContainer = document.getElementById("issuesContainer");
+
+    function loadIssues() {
+        const issues = JSON.parse(localStorage.getItem("issues")) || [];
+        if (!issues.length) { issuesContainer.innerHTML = "<p>No issues yet.</p>"; return; }
+        issuesContainer.innerHTML = "";
+        issues.forEach((issue, index) => {
+            const card = document.createElement("div");
+            card.className = "card";
+            card.innerHTML = `
+                <p><strong>${issue.title}</strong> (${issue.type})</p>
+                <p>${issue.description}</p>
+                <p><strong>Volume:</strong> ${issue.year}</p>
+                <button class="delete-btn" onclick="deleteIssue(${index})">Delete</button>
+            `;
+            issuesContainer.appendChild(card);
+        });
+    }
+
+    function deleteIssue(index) {
+        const issues = JSON.parse(localStorage.getItem("issues")) || [];
+        issues.splice(index, 1);
+        localStorage.setItem("issues", JSON.stringify(issues));
+        loadIssues();
+    }
+
+    issueForm.addEventListener("submit", function(e){
+        e.preventDefault();
+        const title = document.getElementById("issueTitle").value.trim();
+        const description = document.getElementById("issueDescription").value.trim();
+        const type = document.getElementById("issueType").value;
+        const year = new Date().getFullYear();
+        const issues = JSON.parse(localStorage.getItem("issues")) || [];
+        issues.push({ title, description, type, year });
+        localStorage.setItem("issues", JSON.stringify(issues));
+        issueForm.reset();
+        loadIssues();
+    });
+
+    // ================== EVENTS ==================
+    const eventForm = document.getElementById("eventForm");
+    const eventsContainer = document.getElementById("eventsContainer");
+
+    function loadEvents() {
+        const events = JSON.parse(localStorage.getItem("events")) || [];
+        if (!events.length) { eventsContainer.innerHTML = "<p>No events yet.</p>"; return; }
+        eventsContainer.innerHTML = "";
+        events.sort((a,b) => new Date(a.date) - new Date(b.date));
+        events.forEach((event, index) => {
+            const card = document.createElement("div");
+            card.className = "card";
+            card.innerHTML = `
+                <p><strong>${event.title}</strong> (${event.type})</p>
+                <p>${event.description}</p>
+                <p><strong>Date:</strong> ${event.date}</p>
+                <button class="delete-btn" onclick="deleteEvent(${index})">Delete</button>
+            `;
+            eventsContainer.appendChild(card);
+        });
+    }
+
+    function deleteEvent(index) {
+        const events = JSON.parse(localStorage.getItem("events")) || [];
+        events.splice(index, 1);
+        localStorage.setItem("events", JSON.stringify(events));
+        loadEvents();
+    }
+
+    eventForm.addEventListener("submit", function(e){
+        e.preventDefault();
+        const title = document.getElementById("eventTitle").value.trim();
+        const description = document.getElementById("eventDescription").value.trim();
+        const type = document.getElementById("eventType").value;
+        const date = document.getElementById("eventDate").value;
+        const events = JSON.parse(localStorage.getItem("events")) || [];
+        events.push({ title, description, type, date });
+        localStorage.setItem("events", JSON.stringify(events));
+        eventForm.reset();
+        loadEvents();
+    });
+
+    // ================== TEAM ==================
+    const teamForm = document.getElementById("teamForm");
+    const teamContainer = document.getElementById("teamContainer");
+
+    function loadTeam() {
+        const team = JSON.parse(localStorage.getItem("team")) || [];
+        if (!team.length) { teamContainer.innerHTML = "<p>No team members yet.</p>"; return; }
+        teamContainer.innerHTML = "";
+        team.forEach((member, index) => {
+            const card = document.createElement("div");
+            card.className = "card";
+            card.innerHTML = `
+                <p><strong>${member.name}</strong> - ${member.position}</p>
+                <p>Email: ${member.email}</p>
+                <p>LinkedIn: ${member.linkedin}</p>
+                <button class="delete-btn" onclick="deleteTeamMember(${index})">Delete</button>
+            `;
+            teamContainer.appendChild(card);
+        });
+    }
+
+    function deleteTeamMember(index) {
+        const team = JSON.parse(localStorage.getItem("team")) || [];
+        team.splice(index, 1);
+        localStorage.setItem("team", JSON.stringify(team));
+        loadTeam();
+    }
+
+    teamForm.addEventListener("submit", function(e){
+        e.preventDefault();
+        const name = document.getElementById("teamName").value.trim();
+        const position = document.getElementById("teamPosition").value.trim();
+        const email = document.getElementById("teamEmail").value.trim();
+        const linkedin = document.getElementById("teamLinkedIn").value.trim();
+        const photo = document.getElementById("teamPhoto").value.trim();
+        const team = JSON.parse(localStorage.getItem("team")) || [];
+        team.push({ name, position, email, linkedin, photo });
+        localStorage.setItem("team", JSON.stringify(team));
+        teamForm.reset();
+        loadTeam();
+    });
+
+    // ================== CONTACT MESSAGES ==================
+    const messagesContainer = document.getElementById("messagesContainer");
+
+    function loadContactMessages() {
+        const messages = JSON.parse(localStorage.getItem("contactMessages")) || [];
+        if (!messages.length) { messagesContainer.innerHTML = "<p>No messages yet.</p>"; return; }
+        messagesContainer.innerHTML = "";
+        messages.sort((a,b) => new Date(b.date) - new Date(a.date));
+        messages.forEach((msg,index) => {
+            const card = document.createElement("div");
+            card.className = "card";
+            card.innerHTML = `
+                <p><strong>Name:</strong> ${msg.name}</p>
+                <p><strong>Email:</strong> ${msg.email}</p>
+                <p><strong>Subject:</strong> ${msg.subject}</p>
+                <p><strong>Message:</strong> ${msg.message}</p>
+                <p><strong>Date:</strong> ${new Date(msg.date).toLocaleString()}</p>
+                <button class="delete-btn" onclick="deleteMessage(${index})">Delete</button>
+            `;
+            messagesContainer.appendChild(card);
+        });
+    }
+
+    function deleteMessage(index) {
+        const messages = JSON.parse(localStorage.getItem("contactMessages")) || [];
+        messages.splice(index,1);
+        localStorage.setItem("contactMessages",JSON.stringify(messages));
+        loadContactMessages();
+    }
+
+</script>
+</body>
+</html>

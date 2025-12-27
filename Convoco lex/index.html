@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Convoco Lex | Home</title>
+    <style>
+        body {
+            font-family: "Times New Roman", Times, serif;
+            margin: 0;
+            background-color: #f4f6f8;
+        }
+
+        nav {
+            background-color: #0b1d3a;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav h1 {
+            color: white;
+            margin: 0;
+            font-size: 24px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 16px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px;
+            background-color: #e3e6ea;
+        }
+
+        h2 {
+            color: #0b1d3a;
+        }
+
+        .section {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+        }
+
+        .card img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        footer {
+            background-color: #0b1d3a;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-top: 60px;
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <h1>Convoco Lex</h1>
+    <div>
+        <a href="index.html">Home</a>
+        <a href="archives.html">Archives</a>
+        <a href="events.html">Events</a>
+        <a href="team.html">Team</a>
+        <a href="admin.html">Admin</a>
+    </div>
+</nav>
+
+<header>
+    <h1>Welcome to Convoco Lex</h1>
+    <p>Your portal for articles, videos, vlogs, and events.</p>
+</header>
+
+<!-- Latest Insights Section -->
+<div class="section">
+    <h2>Latest Insights</h2>
+    <div id="latestInsights">
+        <p>Loading latest insights...</p>
+    </div>
+</div>
+
+<!-- Upcoming Events Section -->
+<div class="section">
+    <h2>Upcoming Events</h2>
+    <div id="upcomingEvents">
+        <p>Loading upcoming events...</p>
+    </div>
+</div>
+
+<!-- Optional: Team Preview -->
+<div class="section">
+    <h2>Meet Our Team</h2>
+    <div id="teamPreview">
+        <p>Loading team members...</p>
+    </div>
+</div>
+
+<footer>
+    © 2025 Convoco Lex. All rights reserved.
+</footer>
+
+<script>
+    // -----------------------------
+    // Load Latest Insights / Issues
+    // -----------------------------
+    function loadLatestInsights() {
+        const container = document.getElementById("latestInsights");
+        const issues = JSON.parse(localStorage.getItem("issues")) || [];
+
+        if (issues.length === 0) {
+            container.innerHTML = "<p>No insights yet.</p>";
+            return;
+        }
+
+        container.innerHTML = "";
+        // Sort by year descending
+        issues.sort((a,b) => b.year - a.year).forEach(issue => {
+            container.innerHTML += `
+                <div class="card">
+                    <h3>${issue.title} (${issue.type}, ${issue.year})</h3>
+                    <p>${issue.description}</p>
+                </div>
+            `;
+        });
+    }
+
+    // -----------------------------
+    // Load Upcoming Events
+    // -----------------------------
+    function loadUpcomingEvents() {
+        const container = document.getElementById("upcomingEvents");
+        const events = JSON.parse(localStorage.getItem("events")) || [];
+        const today = new Date().toISOString().split("T")[0];
+
+        const upcoming = events.filter(e => e.date >= today).sort((a,b) => a.date.localeCompare(b.date));
+
+        if (upcoming.length === 0) {
+            container.innerHTML = "<p>No upcoming events.</p>";
+            return;
+        }
+
+        container.innerHTML = "";
+        upcoming.forEach(e => {
+            container.innerHTML += `
+                <div class="card">
+                    <h3>${e.title} (${e.type})</h3>
+                    <p>Date: ${e.date}</p>
+                    <p>${e.description}</p>
+                </div>
+            `;
+        });
+    }
+
+    // -----------------------------
+    // Load Team Preview
+    // -----------------------------
+    function loadTeamPreview() {
+        const container = document.getElementById("teamPreview");
+        const team = JSON.parse(localStorage.getItem("team")) || [];
+
+        if (team.length === 0) {
+            container.innerHTML = "<p>No team members added yet.</p>";
+            return;
+        }
+
+        container.innerHTML = "";
+        team.forEach(member => {
+            container.innerHTML += `
+                <div class="card">
+                    <img src="${member.photo}" alt="${member.name}">
+                    <h3>${member.name}</h3>
+                    <p>${member.position}</p>
+                    <p>Email: ${member.email}</p>
+                    <p>LinkedIn: <a href="${member.linkedin}" target="_blank">${member.linkedin}</a></p>
+                </div>
+            `;
+        });
+    }
+
+    // -----------------------------
+    // Initialize
+    // -----------------------------
+    loadLatestInsights();
+    loadUpcomingEvents();
+    loadTeamPreview();
+</script>
+
+</body>
+</html>
