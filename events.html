@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Events | Convoco Lex</title>
+    <style>
+        body {
+            font-family: "Times New Roman", Times, serif;
+            margin: 0;
+            background-color: #f4f6f8;
+        }
+
+        nav {
+            background-color: #0b1d3a;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav h1 {
+            color: white;
+            margin: 0;
+            font-size: 24px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 16px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px;
+            background-color: #e3e6ea;
+        }
+
+        header h1 {
+            color: #0b1d3a;
+        }
+
+        .event-section {
+            max-width: 1000px;
+            margin: 40px auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .event-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .event-card h3 {
+            margin: 0 0 10px;
+            color: #0b1d3a;
+        }
+
+        .event-card p {
+            margin: 5px 0;
+        }
+
+        .event-card button {
+            margin-top: 8px;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+        }
+
+        .edit-btn {
+            background-color: #0b1d3a;
+            color: white;
+            margin-right: 5px;
+        }
+
+        .delete-btn {
+            background-color: #c0392b;
+            color: white;
+        }
+
+        footer {
+            background-color: #0b1d3a;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-top: 60px;
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <h1>Convoco Lex</h1>
+    <div>
+        <a href="index.html">Home</a>
+        <a href="archives.html">Archives</a>
+        <a href="events.html">Events</a>
+        <a href="team.html">Team</a>
+        <a href="about.html">About Us</a>
+        <a href="admin.html">Admin</a>
+    </div>
+</nav>
+
+<header>
+    <h1>Events</h1>
+    <p>Stay up-to-date with all upcoming events, quizzes, debates, and workshops</p>
+</header>
+
+<div class="event-section" id="eventSection">
+    <p>Loading events...</p>
+</div>
+
+<footer>
+    © 2025 Convoco Lex. All rights reserved.
+</footer>
+
+<script>
+    function loadEvents() {
+        const container = document.getElementById("eventSection");
+        const events = JSON.parse(localStorage.getItem("events")) || [];
+
+        if (events.length === 0) {
+            container.innerHTML = "<p>No events available.</p>";
+            return;
+        }
+
+        // Sort events by date ascending
+        events.sort((a,b) => a.date.localeCompare(b.date));
+
+        container.innerHTML = "";
+        events.forEach((event, index) => {
+            container.innerHTML += `
+                <div class="event-card">
+                    <h3>${event.title} (${event.type})</h3>
+                    <p><strong>Date:</strong> ${event.date}</p>
+                    <p>${event.description}</p>
+                    <button class="edit-btn" onclick="editEvent(${index})">Edit</button>
+                    <button class="delete-btn" onclick="deleteEvent(${index})">Delete</button>
+                </div>
+            `;
+        });
+    }
+
+    function editEvent(index) {
+        const events = JSON.parse(localStorage.getItem("events")) || [];
+        const event = events[index];
+
+        const title = prompt("Event Title:", event.title);
+        if (title === null) return;
+        const description = prompt("Description:", event.description);
+        if (description === null) return;
+        const type = prompt("Type (Event, Quiz, Debate, Workshop):", event.type);
+        if (type === null) return;
+        const date = prompt("Date (YYYY-MM-DD):", event.date);
+        if (date === null) return;
+
+        events[index] = { title, description, type, date };
+        localStorage.setItem("events", JSON.stringify(events));
+        loadEvents();
+    }
+
+    function deleteEvent(index) {
+        if (!confirm("Are you sure you want to delete this event?")) return;
+        const events = JSON.parse(localStorage.getItem("events")) || [];
+        events.splice(index, 1);
+        localStorage.setItem("events", JSON.stringify(events));
+        loadEvents();
+    }
+
+    loadEvents();
+</script>
+
+</body>
+</html>

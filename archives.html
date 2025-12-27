@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Archives | Convoco Lex</title>
+    <style>
+        body {
+            font-family: "Times New Roman", Times, serif;
+            margin: 0;
+            background-color: #f4f6f8;
+        }
+
+        nav {
+            background-color: #0b1d3a;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav h1 {
+            color: white;
+            margin: 0;
+            font-size: 24px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 16px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px;
+            background-color: #e3e6ea;
+        }
+
+        header h1 {
+            color: #0b1d3a;
+        }
+
+        .volume-section {
+            max-width: 1000px;
+            margin: 40px auto;
+        }
+
+        .volume-title {
+            color: #0b1d3a;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #0b1d3a;
+            padding-bottom: 5px;
+        }
+
+        .issue-card {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .issue-card h3 {
+            margin: 0 0 8px;
+            color: #0b1d3a;
+        }
+
+        .issue-card p {
+            margin: 5px 0;
+        }
+
+        footer {
+            background-color: #0b1d3a;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-top: 60px;
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <h1>Convoco Lex</h1>
+    <div>
+        <a href="index.html">Home</a>
+        <a href="archives.html">Archives</a>
+        <a href="events.html">Events</a>
+        <a href="team.html">Team</a>
+        <a href="about.html">About Us</a>
+        <a href="admin.html">Admin</a>
+    </div>
+</nav>
+
+<header>
+    <h1>Archives</h1>
+    <p>Explore past issues organized by Volume (Year)</p>
+</header>
+
+<div class="volume-section" id="volumeSection">
+    <p>Loading archives...</p>
+</div>
+
+<footer>
+    © 2025 Convoco Lex. All rights reserved.
+</footer>
+
+<script>
+    function loadArchives() {
+        const container = document.getElementById("volumeSection");
+        const issues = JSON.parse(localStorage.getItem("issues")) || [];
+
+        if (issues.length === 0) {
+            container.innerHTML = "<p>No issues published yet.</p>";
+            return;
+        }
+
+        // Group issues by year (volume)
+        const volumes = {};
+        issues.forEach(issue => {
+            if (!volumes[issue.year]) volumes[issue.year] = [];
+            volumes[issue.year].push(issue);
+        });
+
+        // Sort volumes descending
+        const sortedYears = Object.keys(volumes).sort((a,b) => b-a);
+
+        container.innerHTML = "";
+        sortedYears.forEach(year => {
+            container.innerHTML += `<h2 class="volume-title">Volume ${year}</h2>`;
+            volumes[year].forEach(issue => {
+                container.innerHTML += `
+                    <div class="issue-card">
+                        <h3>${issue.title} (${issue.type})</h3>
+                        <p>${issue.description}</p>
+                    </div>
+                `;
+            });
+        });
+    }
+
+    loadArchives();
+</script>
+
+</body>
+</html>
